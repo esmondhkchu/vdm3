@@ -1,22 +1,21 @@
-from distutils.core import setup
+# from distutils.core import setup
+from setuptools import setup
 
-try:
-    import pypandoc
-    long_descr = pypandoc.convert('README.md', 'rst')
-except(IOError, ImportError):
-    long_descr = open('README.md').read()
+with open('README.md') as f:
+    long_description = f.read()
 
 setup(
   name = 'vdm3',
   packages = ['vdm3'],
-  version = '0.1.1',
+  version = '0.1.2',
   license='MIT',
   description = 'Use Value Difference Metric to find distance between categorical features.',
-  long_description=long_descr,
+  long_description=long_description,
+  long_description_content_type="text/markdown",
   author = 'Esmond Chu',
   author_email = 'chuhke@gmail.com',
   url = 'https://github.com/esmondhkchu/vdm3',
-  download_url = 'https://github.com/esmondhkchu/vdm3/archive/v_0.1.1.tar.gz',
+  download_url = 'https://github.com/esmondhkchu/vdm3/archive/v_0.1.2.tar.gz',
   keywords = ['statistics', 'machine learning', 'distance'],
   test_suite = 'tests',
   install_requires=['numpy','pandas'],
