@@ -1,9 +1,9 @@
 # vdm3
 
 Value difference metric was introduced in 1986 to provide an appropriate distance function for symbolic attributes. It is based on the idea that the goal of finding the distance is to find the right class by looking at the following conditional probabilities. <br>
-![](./equations/cond_prob.png)
+![](./equations/cond_prob.png) <br>
 Then the distance is calculated by the Euclidean Distance: <br>
-![](./equations/distance.png)
+![](./equations/distance.png) <br>
 
 ```
 ValueDifferenceMetric(X=X, y=y)
