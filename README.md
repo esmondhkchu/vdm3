@@ -36,12 +36,12 @@ Get the vdm distance of two points by:
 >>> point1 = ['F','D','INTER','ASSOC','ELNC']
 >>> point2 = ['M', 'S', 'PPC', 'SOMECOLL', 'US']
 
->>> case.get_points_distance(point1=point1, point2=point2)
+>>> case.get_points_distance(point1=point1, point2=point2, metric=2)
 0.20249595200313472
 ```
 Return 0 if two points are the same: <br>
 ```python
->>> case.get_points_distance(point1=point1, point2=point1)
+>>> case.get_points_distance(point1=point1, point2=point1, metric=2)
 0.0
 ```
 
@@ -56,5 +56,5 @@ Return 0 if two points are the same: <br>
     - return a dictionary contains all the vdm pairs and the respective conditional probability of an input x array and y array.
   - vdm_pairs_fit()
     - fit vdm with the class instances.
-  - get_points_distance(point1=point1,point2=point2)
+  - get_points_distance(point1=point1,point2=point2, metric=2)
     - return the distance of two points using the conditional probabilities that learned from the class instances.

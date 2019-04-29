@@ -93,13 +93,14 @@ class ValueDifferenceMetric:
         all_pairs = {i:self.vdm(self.X[i], self.y) for i in self.col_name}
         self.all_pairs = all_pairs
 
-    def get_points_distance(self, point1, point2):
+    def get_points_distance(self, point1, point2, metric=2):
         """ input 2 points,
             return VDM distance
             return 0 if categorical features are the same
 
         arg: point1 (array)
              point2 (array)
+             metric (int) - 1 for 1-norm, 2 for 2-norm (default)
 
         return: float
         """
@@ -126,6 +127,11 @@ class ValueDifferenceMetric:
 
         result_dist = [vdm_dist[i].get(tuple(sorted(dist_pat[i]))) for i in range(len(dist_pat))]
         var_dist = np.array([i if i != None else 0 for i in result_dist])
-        dist = np.sqrt(np.sum(var_dist**2))
+        if metric == 2:
+            dist = np.sqrt(np.sum(var_dist**2))
+        elif metric == 1:
+            dist = np.sum(np.absolute(var_dist))
+        else:
+            raise ValueError('Wrong distance metric input')
         return dist
 
