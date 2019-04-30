@@ -5,10 +5,18 @@ Value difference metric was introduced in 1986 to provide an appropriate distanc
 Then the distance is calculated by the Euclidean Distance or Manhattan Distance, for instance: <br>
 ![](./equations/distance.png) <br>
 
+# Install
+
+```
+pip install vdm3
+```
+
+## Parameters:
+
 ```
 ValueDifferenceMetric(X=X, y=y)
 ```
-## Parameters:
+
   - X: ndarray, DataFrame, Series
   - y: tuple, list, ndarray, Series
 
