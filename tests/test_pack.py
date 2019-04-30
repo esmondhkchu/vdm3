@@ -196,4 +196,15 @@ def test_one_dim_array_pd():
     test = ValueDifferenceMetric(X2,y1)
     test.vdm_pairs_fit()
     assert isinstance(test.get_points_distance('a','b'), (float, int))
-    assert test.get_points_distance('a','a') == 0 
+    assert test.get_points_distance('a','a') == 0
+
+def test_special_case():
+    specx = np.array(['White','Red','Black','Red','Red','White'])
+    specy = np.array([0,1,1,2,2,0])
+    test = ValueDifferenceMetric(specx, specy)
+    test.vdm_pairs_fit()
+    assert test.get_points_distance(['White'],['Black'])
+    assert isinstance(test.get_points_distance(['White'],['Black']), (float, int))
+    assert round(test.get_points_distance(['White'],['Red']), 3) == 1.556 
+    with pytest.raises(ValueError):
+        assert test.get_points_distance(['White'],['Pink'])

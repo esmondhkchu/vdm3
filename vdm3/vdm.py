@@ -53,12 +53,8 @@ class ValueDifferenceMetric:
 
         def one_prob(val):
             val_arr = np.array(y)[x == val]
-            count = np.unique(val_arr, return_counts=True)
-            if all(count[0] == np.unique(y)):
-                return count[1]/sum(count[1])
-            else:
-                new_count = np.array([list(val_arr).count(i) for i in np.unique(y)])
-                return new_count/sum(new_count)
+            new_count = np.array([list(val_arr).count(i) for i in np.unique(y)])
+            return new_count/sum(new_count)
 
         unique_x = np.unique(x)
         cond_prob = {i:j for i,j in zip(unique_x, np.array([one_prob(i) for i in unique_x]))}
@@ -118,7 +114,7 @@ class ValueDifferenceMetric:
             else:
                 pass
             
-        dist_pat = list(zip(point1, point2))
+        dist_pat = [tuple(sorted(i)) for i in zip(point1, point2)]
         try:
             vdm_dist = list(self.all_pairs.values())
         except:
@@ -133,7 +129,7 @@ class ValueDifferenceMetric:
             else:
                 pass
 
-        result_dist = [vdm_dist[i].get(tuple(sorted(dist_pat[i]))) for i in range(len(dist_pat))]
+        result_dist = [vdm_dist[i].get(dist_pat[i]) for i in range(len(dist_pat))]
         var_dist = np.array([i if i != None else 0 for i in result_dist])
-        dist = np.sqrt(np.sum(var_dist))
+        dist = np.sqrt(np.sum(var_dist**2))
         return dist
