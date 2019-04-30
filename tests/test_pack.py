@@ -153,14 +153,14 @@ def test_get_points_distance_input():
     test = ValueDifferenceMetric(X,y)
     test.vdm_pairs_fit()
     with pytest.raises(DimensionError):
-        test.get_points_distance(bd_point2, gd_point1, 2)
+        test.get_points_distance(bd_point2, gd_point1)
 
 def test_get_points_distance():
     """ test good points
     """
     test = ValueDifferenceMetric(X,y)
     test.vdm_pairs_fit()
-    assert isinstance(test.get_points_distance(gd_point1, gd_point2, 2), float)
+    assert isinstance(test.get_points_distance(gd_point1, gd_point2), float)
 
 def test_get_wrong_points_distance():
     """ should raise an error if points are not in training
@@ -168,7 +168,7 @@ def test_get_wrong_points_distance():
     test = ValueDifferenceMetric(X,y)
     test.vdm_pairs_fit()
     with pytest.raises(ValueError):
-        assert test.get_points_distance(gd_point1, bd_point1, 2)
+        assert test.get_points_distance(gd_point1, bd_point1)
 
 def test_get_points_distance_zero():
     """ if two points input are the same,
@@ -176,22 +176,24 @@ def test_get_points_distance_zero():
     """
     test = ValueDifferenceMetric(X,y)
     test.vdm_pairs_fit()
-    assert test.get_points_distance(gd_point1, gd_point1, 2) == 0
+    assert test.get_points_distance(gd_point1, gd_point1) == 0
 
-def test_get_points_distance_wrong_para():
-    """ should raise an error if input parameter isn't 1 or 2
-    """
-    test = ValueDifferenceMetric(X,y)
+##########################################################
+##################### Test 1xd array #####################
+##########################################################
+
+X1 = np.array(['a','b','a','a','c'])
+X2 = pd.Series(['a','b','a','a','c'])
+y1 = np.array([0,1,0,1,1])
+
+def test_one_dim_array_np():
+    test = ValueDifferenceMetric(X1,y1)
     test.vdm_pairs_fit()
-    with pytest.raises(ValueError):
-        assert test.get_points_distance(gd_point1, gd_point2, metric=3)
+    assert isinstance(test.get_points_distance('a','b'), (float, int))
+    assert test.get_points_distance('a','a') == 0
 
-def test_get_points_distance_norm1():
-    """ test 1-norm return type
-    """
-    test = ValueDifferenceMetric(X,y)
+def test_one_dim_array_pd():
+    test = ValueDifferenceMetric(X2,y1)
     test.vdm_pairs_fit()
-    pre_result = test.get_points_distance(gd_point1, gd_point2, metric=1)
-    assert isinstance(pre_result, float)
-
-
+    assert isinstance(test.get_points_distance('a','b'), (float, int))
+    assert test.get_points_distance('a','a') == 0 

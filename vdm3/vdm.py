@@ -35,7 +35,10 @@ class ValueDifferenceMetric:
 
         self.X = X
         self.y = np.array(y)
-        self.col_name = list(X)
+        if isinstance(self.X, pd.DataFrame):
+            self.col_name = list(self.X)
+        else:
+            pass
 
     @staticmethod
     def get_cond_prob(x,y):
@@ -46,10 +49,6 @@ class ValueDifferenceMetric:
 
         return: dict - keys = class values
                        values = values of y
-
-        >>> test = ValueDifferenceMetric(np.array(['a','b']), np.array([0,1])) 
-        >>> test.get_cond_prob(np.array(['a','a','b','b']),np.array([0,1,1,0]))
-        {'a': array([0.5, 0.5]), 'b': array([0.5, 0.5])}
         """
 
         def one_prob(val):
@@ -73,10 +72,6 @@ class ValueDifferenceMetric:
 
         return: dict - keys = class pairs
                        values = vdm distances
-        
-        >>> test = ValueDifferenceMetric(np.array(['a','b']), np.array([0,1]))
-        >>> test.vdm(np.array(['a','a','b','b']),np.array([0,1,1,0]))
-        {('a', 'b'): 0.0}
         """
         unique_x = np.unique(x)
         cat_pairs = [(unique_x[i],unique_x[j]) for i in range(len(unique_x)) for j in range(len(unique_x)) if i<j]
@@ -90,26 +85,39 @@ class ValueDifferenceMetric:
     def vdm_pairs_fit(self):
         """ dictionary stored vdm distance of different pairs of each feature
         """
-        all_pairs = {i:self.vdm(self.X[i], self.y) for i in self.col_name}
-        self.all_pairs = all_pairs
+        if isinstance(self.X, pd.DataFrame):
+            all_pairs = {i:self.vdm(self.X[i], self.y) for i in self.col_name}
+            self.all_pairs = all_pairs
+        elif isinstance(self.X, (np.ndarray, pd.core.series.Series)):
+            if len(self.X.shape) == 1:
+                all_pairs = {0:self.vdm(self.X, self.y)}
+                self.all_pairs = all_pairs
+            elif len(self.X.shape) == 2:
+                all_pairs = {i:self.vdm(self.X[:,i], self.y) for i in range(self.X.shape[0])}
+                self.all_pairs = all_pairs
 
-    def get_points_distance(self, point1, point2, metric=2):
+    def get_points_distance(self, point1, point2):
         """ input 2 points,
             return VDM distance
             return 0 if categorical features are the same
 
         arg: point1 (array)
              point2 (array)
-             metric (int) - 1 for 1-norm, 2 for 2-norm (default)
 
         return: float
         """
 
-        if (len(point1) != self.X.shape[1]) or (len(point2) != self.X.shape[1]):
-            raise DimensionError('Dimension mismatch')
+        if len(self.X.shape) == 1:
+            if (len(point1) != 1) or (len(point2) != 1):
+                raise DimensionError('Dimension mismatch')
+            else:
+                pass
         else:
-            pass
-
+            if (len(point1) != self.X.shape[1]) or (len(point2) != self.X.shape[1]):
+                raise DimensionError('Dimension mismatch')
+            else:
+                pass
+            
         dist_pat = list(zip(point1, point2))
         try:
             vdm_dist = list(self.all_pairs.values())
@@ -117,7 +125,7 @@ class ValueDifferenceMetric:
             temp1 = self.all_vdm_pairs()
             vdm_dist = list(self.all_pairs.values())
 
-        # warning if any variables in point1 or point2 are not in trianing data
+        # error if any variables in point1 or point2 are not in trianing data
         for i in range(len(self.all_pairs.keys())):
             name = list(self.all_pairs.keys())[i]
             if (dist_pat[i] not in self.all_pairs.get(name).keys()) and (dist_pat[i][0] != dist_pat[i][1]):
@@ -127,11 +135,5 @@ class ValueDifferenceMetric:
 
         result_dist = [vdm_dist[i].get(tuple(sorted(dist_pat[i]))) for i in range(len(dist_pat))]
         var_dist = np.array([i if i != None else 0 for i in result_dist])
-        if metric == 2:
-            dist = np.sqrt(np.sum(var_dist**2))
-        elif metric == 1:
-            dist = np.sum(np.absolute(var_dist))
-        else:
-            raise ValueError('Wrong distance metric input')
+        dist = np.sqrt(np.sum(var_dist))
         return dist
-
