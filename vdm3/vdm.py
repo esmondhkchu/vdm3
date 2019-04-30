@@ -131,5 +131,5 @@ class ValueDifferenceMetric:
 
         result_dist = [vdm_dist[i].get(dist_pat[i]) for i in range(len(dist_pat))]
         var_dist = np.array([i if i != None else 0 for i in result_dist])
-        dist = np.sqrt(np.sum(var_dist**2))
+        dist = np.sqrt(np.sum(var_dist))
         return dist

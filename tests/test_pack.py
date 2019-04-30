@@ -205,6 +205,6 @@ def test_special_case():
     test.vdm_pairs_fit()
     assert test.get_points_distance(['White'],['Black'])
     assert isinstance(test.get_points_distance(['White'],['Black']), (float, int))
-    assert round(test.get_points_distance(['White'],['Red']), 3) == 1.556 
+    assert round(test.get_points_distance(['White'],['Red']), 3) == 1.247 
     with pytest.raises(ValueError):
         assert test.get_points_distance(['White'],['Pink'])

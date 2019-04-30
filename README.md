@@ -45,7 +45,7 @@ Get the vdm distance of two points by:
 >>> point2 = ['M', 'S', 'PPC', 'SOMECOLL', 'US']
 
 >>> case.get_points_distance(point1=point1, point2=point2)
-0.20249595200313472
+0.5905636562630361
 ```
 Return 0 if two points are the same: <br>
 ```python
