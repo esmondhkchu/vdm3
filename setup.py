@@ -7,7 +7,7 @@ with open('README.md') as f:
 setup(
   name = 'vdm3',
   packages = ['vdm3'],
-  version = '0.1.6',
+  version = '0.1.7',
   license='MIT',
   description = 'Use Value Difference Metric to find distance between categorical features.',
   long_description=long_description,
@@ -15,7 +15,7 @@ setup(
   author = 'Esmond Chu',
   author_email = 'chuhke@gmail.com',
   url = 'https://github.com/esmondhkchu/vdm3',
-  download_url = 'https://github.com/esmondhkchu/vdm3/archive/v_0.1.6.tar.gz',
+  download_url = 'https://github.com/esmondhkchu/vdm3/archive/v_0.1.7.tar.gz',
   keywords = ['statistics', 'machine learning', 'distance'],
   test_suite = 'tests',
   install_requires=['numpy','pandas'],

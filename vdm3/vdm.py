@@ -89,7 +89,8 @@ class ValueDifferenceMetric:
                 all_pairs = {0:self.vdm(self.X, self.y)}
                 self.all_pairs = all_pairs
             elif len(self.X.shape) == 2:
-                all_pairs = {i:self.vdm(self.X[:,i], self.y) for i in range(self.X.shape[0])}
+                # here fixed a typo
+                all_pairs = {i:self.vdm(self.X[:,i], self.y) for i in range(self.X.shape[1])}
                 self.all_pairs = all_pairs
 
     def get_points_distance(self, point1, point2):
