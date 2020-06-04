@@ -1,5 +1,5 @@
 import pytest
-from vdm import *
+from vdm3 import *
 
 import pandas as pd
 import numpy as np
@@ -24,8 +24,8 @@ def test_good_Xinput_variable_type(test_type):
     """
     test = ValueDifferenceMetric(test_type, [1,2,3])
 
-var_val = [1,[1,],(1,)]
-var_id = ['int', 'list', 'tuple']
+var_val = [1,[1,],(1,),'test']
+var_id = ['int', 'list', 'tuple','str']
 
 @pytest.mark.parametrize('test_type', var_val, ids=var_id)
 def test_bad_Xinput_variable_type(test_type):
@@ -73,6 +73,37 @@ def test_y_dimension_mismatch():
         test = ValueDifferenceMetric(var1, var1)
 
 ##########################################################
+########### Test "continuous" Variable Type ##############
+##########################################################
+
+dim_var_1 = (1,)
+dim_var_2 = [1]
+dim_var_3 = np.array([1])
+dim_var_4 = pd.Series([1])
+
+var_val = [dim_var_1, dim_var_2, dim_var_3, dim_var_4]
+var_id = ['tuple', 'list', 'ndarray', 'pd.core.series']
+
+@pytest.mark.parametrize('test_type', var_val, ids=var_id)
+def test_continuous_parameter(test_type):
+    """ test continuous parameter data type
+        note: continuous parameter is a container collects the column number of continuous data
+    """
+    test = ValueDifferenceMetric(var1, [1,2,3], test_type)
+
+var_val = [1, '1']
+var_id = ['int', 'str']
+
+@pytest.mark.parametrize('test_type', var_val, ids=var_id)
+def test_bad_continuous_parameter(test_type):
+    """ check bad variable type for continuous parameter
+        should raise TypeError if input is wrong type
+        should all pass
+    """
+    with pytest.raises(TypeError):
+        test = ValueDifferenceMetric(var1, [1,2,3], test_type)
+
+##########################################################
 ############# Test X and y dimension issue ###############
 ##########################################################
 
@@ -85,126 +116,56 @@ def test_X_y_dimension_mismatch():
         test = ValueDifferenceMetric(np.array([[1,2,3],[1,2,3]]), [1,2,3])
 
 ##########################################################
+################# Test ins_1 and ins_2  ##################
 ##########################################################
 
-columns = {
-    'Gender':['F','F','F','M','F','F','F','F','M','F'],
-    'Marital':['UN','S','M','M','S','M','M','S','D','M'],
-    'Lead':['REF','INTINT','REF','INTINT','RADIO','REF','INTER','PPC','PPC','RADIO'],
-    'PrevEd':['SOMECOLL','SOMECOLL','ASSOC','BACH','BACH','ASSOC','UN','SOMECOLL','BACH','SOMECOLL'],
-    'Citizen':['US','US','US','US','US','ELNC','US','US','US','US']
-}
+X = pd.DataFrame({'color':['White','Red','Black','Red','Red','White'], \
+                  'mpg':[23,28,32,42,40,20]})
+y = np.array(['van','sport','sport','sedan','sedan','van'])
 
-X = pd.DataFrame(columns)
-y = np.array([0,0,1,0,0,0,0,0,0,1])
+case = ValueDifferenceMetric(X,y,[1])
+case.fit()
 
-##########################################################
-################### Test get_cond_prob ###################
-##########################################################
+var = [('White',2),['White',2], np.array(['White',2]), pd.Series(['White',2])]
+var_id = ['tuple','list','ndarray','pd.core.series']
 
-def test_get_cond_prob():
-    test = ValueDifferenceMetric(X,y)
-    cond_prob = test.get_cond_prob(np.array(['M','M','F','F']), np.array([1,0,1,0]))
-    assert isinstance(cond_prob, dict)
-    assert list(cond_prob.keys()) == ['F','M']
-    assert list(cond_prob.get('F')) == [0.5,0.5]
-    assert list(cond_prob.get('M')) == [0.5,0.5]
-
-##########################################################
-######################## Test vdm ########################
-##########################################################
-
-var_val = ['Gender','Marital','Lead','PrevEd','Citizen']
-var_id = ['Gender','Marital','Lead','PrevEd','Citizen']
-
-@pytest.mark.parametrize('test_type', var_val, ids=var_id)
-def test_vdm(test_type):
-    test = ValueDifferenceMetric(X,y)
-    vdm = test.vdm(X[test_type], y)
-    assert isinstance(vdm, dict)
-    # check number of combination is correct
-    n = len(np.unique(X[test_type]))
-    assert len(vdm.keys()) == comb(n,2)
-
-##########################################################
-################### Test vdm_pairs_fit ###################
-##########################################################
-
-def test_vdm_pairs_fit():
-    test = ValueDifferenceMetric(X,y)
-    test.vdm_pairs_fit()
-    assert isinstance(test.all_pairs, dict)
-    assert len(test.all_pairs.keys()) == 5
-    assert list(test.all_pairs.keys()) == list(X)
-
-##########################################################
-################### Test vdm_pairs_fit ###################
-##########################################################
-
-gd_point1 = ['F','D','INTER','ASSOC','ELNC']
-gd_point2 = ['M', 'S', 'PPC', 'SOMECOLL', 'US']
-
-bd_point1 = ['F','hello','world','ASSOC','ELNC']
-bd_point2 = [1,2]
-
-def test_get_points_distance_input():
-    """ should raise an error if point dimensions are mismatch
+@pytest.mark.parametrize('test_type', var, ids=var_id)
+def test_get_distance_proper_case(test_type):
     """
-    test = ValueDifferenceMetric(X,y)
-    test.vdm_pairs_fit()
+    """
+    case.get_distance(test_type, test_type) == 0
+
+def test_get_distance_datatype():
+    """ test if non proper data type in self.get_distance()
+        with raise an TypeError error
+    """
+    with pytest.raises(TypeError):
+        case.get_distance(1,2)
+
+def test_get_distance_dimension():
+    """ test if dimension mismatch with ins_1 and ins_2 with training data will raise a dimension error
+    """
     with pytest.raises(DimensionError):
-        test.get_points_distance(bd_point2, gd_point1)
+        case.get_distance([1,2,3,4],[1,2,3,4])
 
-def test_get_points_distance():
-    """ test good points
+def test_get_distance_dimension_ins1_neq_ins2():
+    """ test if dimension of ins_1 not equal to ins_2 will raise a dimension error
     """
-    test = ValueDifferenceMetric(X,y)
-    test.vdm_pairs_fit()
-    assert isinstance(test.get_points_distance(gd_point1, gd_point2), float)
-
-def test_get_wrong_points_distance():
-    """ should raise an error if points are not in training
-    """
-    test = ValueDifferenceMetric(X,y)
-    test.vdm_pairs_fit()
-    with pytest.raises(ValueError):
-        assert test.get_points_distance(gd_point1, bd_point1)
-
-def test_get_points_distance_zero():
-    """ if two points input are the same,
-        resultant distance (return) should be 0
-    """
-    test = ValueDifferenceMetric(X,y)
-    test.vdm_pairs_fit()
-    assert test.get_points_distance(gd_point1, gd_point1) == 0
+    with pytest.raises(DimensionError):
+        case.get_distance([1,2],[1,2,3])
 
 ##########################################################
-##################### Test 1xd array #####################
+###################### Test Values #######################
 ##########################################################
 
-X1 = np.array(['a','b','a','a','c'])
-X2 = pd.Series(['a','b','a','a','c'])
-y1 = np.array([0,1,0,1,1])
+input_dim_0 = ['White','Red','Black','Red','Red','White']
+input_dim_1 = [23,28,32,42,40,20]
+expected = [5.153,0,4.110,14,12,8.097]
 
-def test_one_dim_array_np():
-    test = ValueDifferenceMetric(X1,y1)
-    test.vdm_pairs_fit()
-    assert isinstance(test.get_points_distance('a','b'), (float, int))
-    assert test.get_points_distance('a','a') == 0
+test_data = [[[i,j],k] for i,j,k in zip(input_dim_0, input_dim_1, expected)]
 
-def test_one_dim_array_pd():
-    test = ValueDifferenceMetric(X2,y1)
-    test.vdm_pairs_fit()
-    assert isinstance(test.get_points_distance('a','b'), (float, int))
-    assert test.get_points_distance('a','a') == 0
+var_id = ['test_{}'.format(i) for i in range(6)]
 
-def test_special_case():
-    specx = np.array(['White','Red','Black','Red','Red','White'])
-    specy = np.array([0,1,1,2,2,0])
-    test = ValueDifferenceMetric(specx, specy)
-    test.vdm_pairs_fit()
-    assert test.get_points_distance(['White'],['Black'])
-    assert isinstance(test.get_points_distance(['White'],['Black']), (float, int))
-    assert round(test.get_points_distance(['White'],['Red']), 3) == 1.247 
-    with pytest.raises(ValueError):
-        assert test.get_points_distance(['White'],['Pink'])
+@pytest.mark.parametrize('test_ins, expected', test_data, ids=var_id)
+def test_vdm_calculation(test_ins, expected):
+    assert round(case.get_distance(test_ins, np.array(['Red', 28])), 3) == expected
