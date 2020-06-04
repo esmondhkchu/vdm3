@@ -1,5 +1,6 @@
 # Don't track content of these folders
 
-.DS_Store
+*.DS_Store
 __pycache__
-vdm3.egg-info
+*.egg-info
+dist
