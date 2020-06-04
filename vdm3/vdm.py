@@ -1,4 +1,4 @@
-from components import *
+from vdm3.components import *
 
 class ValueDifferenceMetric:
     def __init__(self, X, y, continuous=None):
@@ -15,6 +15,10 @@ class ValueDifferenceMetric:
 
         if not isinstance(y, (tuple, list, np.ndarray, pd.core.series.Series)):
             raise TypeError('Wrong input data type: y')
+
+        if continuous is not None:
+            if not isinstance(continuous, (tuple, list, np.ndarray, pd.core.series.Series)):
+                raise TypeError('continuous must be a container type object')
 
         # check dimension
         if len(X) != len(y):
@@ -47,6 +51,22 @@ class ValueDifferenceMetric:
 
         Returns: dist (float) - vdm distance between the two instances
         """
+
+        if not isinstance(ins_1, (tuple, list, np.ndarray, pd.core.series.Series)):
+            raise TypeError('Wrong input data type: ins_1')
+
+        if not isinstance(ins_2, (tuple, list, np.ndarray, pd.core.series.Series)):
+            raise TypeError('Wrong input data type: ins_2')
+
+        if len(ins_1) != self.X.shape[-1]:
+            raise DimensionError('Dimension mismatch with training data: ins_1')
+
+        if len(ins_2) != self.X.shape[-1]:
+            raise DimensionError('Dimension mismatch with training data: ins_2')
+
+        if len(ins_1) != len(ins_2):
+            raise DimensionError('Dimension of ins_1 != Dimension of ins_2')
+
         ins_1 = np.array(ins_1)
         ins_2 = np.array(ins_2)
 
