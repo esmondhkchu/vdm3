@@ -14,55 +14,34 @@ pip install vdm3
 ## Parameters:
 
 ```
-ValueDifferenceMetric(X=X, y=y)
+ValueDifferenceMetric(X=X, y=y, continuous=None)
 ```
 
   - X: ndarray, DataFrame, Series
   - y: tuple, list, ndarray, Series
+  - continuous: tuple, list, ndarray, Series - the column index of continuous variables, if default, will assume all the columns are categorical
 
 # Usage
 Consider the following example: <br>
 ```python
->>> columns = {
-    'Gender':['F','F','F','M','F','F','F','F','M','F'],
-    'Marital':['UN','S','M','M','S','M','M','S','D','M'],
-    'Lead':['REF','INTINT','REF','INTINT','RADIO','REF','INTER','PPC','PPC','RADIO'],
-    'PrevEd':['SOMECOLL','SOMECOLL','ASSOC','BACH','BACH','ASSOC','UN','SOMECOLL','BACH','SOMECOLL'],
-    'Citizen':['US','US','US','US','US','ELNC','US','US','US','US']
-      }
-
->>> X = pd.DataFrame(columns)
->>> y = np.array([0,0,1,0,0,0,0,0,0,1])
+>>> X = pd.DataFrame({'color':['White','Red','Black','Red','Red','White'], 'mpg':[23,28,32,42,40,20]})
+>>> y = np.array(['van','sport','sport','sedan','sedan','van'])
 ```
 Initiate the example by: <br>
 ```python
->>> case = ValueDifferenceMetric(X=X,y=y)
->>> case.vdm_pairs_fit()
+>>> case = ValueDifferenceMetric(X=X, y=y, continuous=[1])
+>>> case.fit()
 ```
 Get the vdm distance of two points by:
 ```python
->>> point1 = ['F','D','INTER','ASSOC','ELNC']
->>> point2 = ['M', 'S', 'PPC', 'SOMECOLL', 'US']
+>>> one = np.array(['White',23])
+>>> two = np.array(['Red',28])
 
->>> case.get_points_distance(point1=point1, point2=point2)
-0.5905636562630361
+>>> case.get_distance(ins_1=one, ins_2=two)
+5.153208277913436
 ```
 Return 0 if two points are the same: <br>
 ```python
->>> case.get_points_distance(point1=point1, point2=point1)
+>>> case.get_points_distance(ins_1=one, ins_2=one)
 0.0
 ```
-
-# Attributes
-  - all_pairs
-    - all vdm distance pairs from the class instances.
-
-# Methods
-  - get_cond_prob(x=x,y=y)
-    - return a dictionary contains the conditional probabilities of an input x array and y array.
-  - vdm(x=x,y=y)
-    - return a dictionary contains all the vdm pairs and the respective conditional probability of an input x array and y array.
-  - vdm_pairs_fit()
-    - fit vdm with the class instances.
-  - get_points_distance(point1=point1,point2=point2)
-    - return the distance of two points using the conditional probabilities that learned from the class instances.
