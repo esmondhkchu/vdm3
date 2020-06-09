@@ -102,7 +102,7 @@ Next, we will separate the categorical columns to normalized the continuous colu
 After processing the data, we will first need to initiate our VDM object.
 ```python
 # specific the continuous columns index
->>> vdm = ValueDifferenceMetric(X_train_n, y_train, continuous=cont_idx)
+>>> vdm = ValueDifferenceMetric(X_train_n, y_train, continuous=[0,1,2,3,4,5,6,7,8,9,10])
 >>> vdm.fit()
 ```
 Our vdm method `self.get_distance()` will be used as a user defined distance function for scikit-learn neaerest neighbors. <br>
