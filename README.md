@@ -2,7 +2,7 @@
 
 Value difference metric was introduced in 1986 to provide an appropriate distance function for symbolic attributes. It is based on the idea that the goal of finding the distance is to find the right class by looking at the following conditional probabilities. <br>
 ![](https://github.com/esmondhkchu/vdm3/raw/master/equations/cond_prob.png) <br>
-Then the distance is calculated by the Euclidean Distance or Manhattan Distance, for instance: <br>
+Then the distance is calculated by the k-norm, for instance k=2 will be the Euclidean norm: <br>
 ![](https://github.com/esmondhkchu/vdm3/raw/master/equations/distance.png) <br>
 
 # Install
@@ -20,6 +20,12 @@ ValueDifferenceMetric(X=X, y=y, continuous=None)
   - X: ndarray, DataFrame, Series
   - y: tuple, list, ndarray, Series
   - continuous: tuple, list, ndarray, Series - the column index of continuous variables, if default, will assume all the columns are categorical
+
+## Attributes
+cond_proba - the learned conditional probabilities
+
+## Method
+get_distance(self, ins_1, ins_2, norm=2) - calculate the combined distance (categorical & continuous columns if any) between ins_1 and ins_2, with norm n. By default, n=2
 
 # Usage
 Consider the following example: <br>
