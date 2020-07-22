@@ -7,9 +7,9 @@ with open('README.md') as f:
 setup(
   name = 'vdm3',
   packages = ['vdm3'],
-  version = '0.1.9.1',
+  version = '0.0.1',
   license='MIT',
-  description = 'Use Value Difference Metric to find distance between categorical features.',
+  description = 'Use Value Difference Metric to find distance between categorical features',
   long_description=long_description,
   long_description_content_type="text/markdown",
   author = 'Esmond Chu',
