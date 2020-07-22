@@ -15,7 +15,7 @@ setup(
   author = 'Esmond Chu',
   author_email = 'chuhke@gmail.com',
   url = 'https://github.com/esmondhkchu/vdm3',
-  download_url = 'https://github.com/esmondhkchu/vdm3/archive/v_0.1.9.1.tar.gz',
+  download_url = 'https://github.com/esmondhkchu/vdm3/archive/v0.0.1.tar.gz',
   keywords = ['statistics', 'machine learning', 'distance'],
   test_suite = 'tests',
   install_requires=['numpy','pandas'],
