@@ -31,7 +31,7 @@ def get_conditional_proba(x,y):
         append_val = [i for i in unique_y if i not in cond_proba]
         if len(append_val) > 0:
             append_series = pd.Series(np.zeros(len(append_val)), index=append_val)
-            cond_proba = cond_proba.append(append_series)
+            cond_proba = pd.concat([cond_proba, append_series])
 
         # create new key
         class_proba[unique_x] = cond_proba
